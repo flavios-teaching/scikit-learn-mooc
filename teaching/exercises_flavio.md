@@ -23,7 +23,7 @@ Load the data with Python and try to answer the following questions:
 - but see below, there is a shorter way. show documentation? -- it's not the core.
 - give them the command?
 
-### Quiz M1.01
+### Quiz M1.01 (ignored)
 
 **1. In the code we previously wrote, we used pandas and specifically `adult_census = pd.read_csv("../datasets/adult-census.csv")` to:**
 - a) load a comma-separated values file
@@ -61,13 +61,56 @@ Load the data with Python and try to answer the following questions:
 
 ## Handling categorical data
 
+### Additional exercise based on the material
+
+#### Ordinal encoding (everyone gives their answers in the collaborative doc): [Flavio] 
+
+Q1: Is ordinal encoding is appropriate for marital status? For which (other) categories in the adult census would it be appropriate? Why?
+Q2: Can you think of another example of categorical data that is ordinal?
+Q3: What problem arises if we use ordinal encoding on a sizing chart with options: XS, S, M, L, XL, XXL? (HINT: explore `ordinal_encoder.categories_`)
+Q4: How could you solve this problem? (Look in documentation of OrdinalEncoder)
+Q5: Can you think of an ordinally encoded variable that would not have this issue?
+
+*Answers:*
+A1: Only education (in fact, the encoder was already present in the data set as education-num), as this is the only one that can be expressed as an incremental feature
+A2: Examples could be:
+  - Alphabetized: US grading system: A, B, C, D, F
+  - Not alphabetized: clothing sizes: XS, S, M, L, XL, XXL
+
+A3: Would not be in correct order (it's alphabetized).
+A4: top of documention will tell you to use `categories` argument with a list in the correct order
+```
+ordered_size_list = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+encoder_with_order = OrdinalEncoder(categories=ordered_size_list)
+```
+A5: US grading scheme is alphabetical to begin with (A,B,C,D,F)
+
+
+
 ### Exercise M1.04
+
+header in exercise document:  "The impact of using integer encoding for with logistic regression (groups of 2, 15min)"
 
 Work in groups of 2, with your neighbor. (15min) 
 
 Goal: understand the impact of arbitrary integer encoding for categorical variables with linear classification such as logistic regression.
 
 We keep using the `adult_census` data set already loaded in the code before. Recall that `target` contains the variable we want to predict and `data` contains the features.
+
+If you need to re-load the data, you can do it as follows:
+
+```python
+import pandas as pd
+
+adult_census = pd.read_csv("../datasets/adult-census.csv")
+target_name = "class"
+target = adult_census[target_name]
+data = adult_census.drop(columns=[target_name, "education-num"])
+```
+
+
+**(0) Select columns containing strings**
+Use `sklearn.compose.make_column_selector` to automatically select columns containing strings that correspond to categorical features in our dataset.
 
 **(1) Build a scikit-learn pipeline composed of an `OrdinalEncoder` and a `LogisticRegression` classifier**
 
@@ -91,10 +134,7 @@ from sklearn.model_selection import cross_validate
 
 ```
 
-<mark> TODO -- Question for Sven </mark> is cross validation already introduced by this time?
-
-
-**(3) Repeat the previous steps usingh an `OneHotEncoder` instead of an `OrdinalEncoder`**
+**(3) Repeat the previous steps using an `OneHotEncoder` instead of an `OrdinalEncoder`**
 
 You'll need the following, already loaded modules:
 
@@ -108,6 +148,39 @@ We'll do the following steps
 1. use the `OneHotEncoder` for preprocessing
 2. assemble pipeline for `LogisticRegression`
 3. use cross-validation to check the generalization performance, also relative to the `OneHotEncoder`
+
+
+### Quiz M1.03: categorical and numerical variables (5 minutes in pairs; if time permits)[Flavio/Malte?]
+
+Select all true answers for each question
+
+**Q1: How are categorical variables represented?**
+- a) a categorical feature is only represented by non-numerical data
+- b) a categorical feature represents a finite number of values called categories
+- c) a categorical feature can either be represented by numerical or
+     non-numerical values
+
+**Q2: An ordinal variable:**
+- a) is a categorical variable with a large number of different categories;
+- b) can be represented by integers or string labels;
+- c) is a categorical variable with a meaningful order.
+
+
+**Q3: One-hot encoding:**
+- a) encodes each column with string-labeled values into a
+     single integer-coded column
+- b) transforms a numerical variable into a categorical variable
+- c) creates one additional column for each possible category
+- d) transforms string-labeled variables using a numerical representation
+
+
+**Q4: Assume we have a dataset where each line describes a company. Which of the following columns should be considered as a meaningful numerical feature to train a machine learning model to classify companies:**
+- a) the sector of activity ("construction", "retail", "energy", "insurance"...)
+- b) the phone number of the sales department
+- c) the number of employees
+- d) the profits of the last quarter
+- e) the post code of the head quarters
+
 
 # Selecting the best model
 
@@ -168,7 +241,7 @@ Plot the train and test scores with respect to the number of samples.
 
 
 ### Quiz M2.02
-
+in collaborative document: Quiz: over- and underfitting and learning curves (5 minutes, in pairs; if time-permitting)
 
 **1. A model is overfitting when:**
 - a) both the train and test errors are high
